@@ -110,23 +110,48 @@ def summarize(lecture_text, mode, pdfs):
     return result, pdf_path, docx_path
 
 # -------------------------------
-# Gradio Interface
+# Full-Width Two-Column Interface
 # -------------------------------
-iface = gr.Interface(
-    fn=summarize,
-    inputs=[
-        gr.Textbox(lines=8, label="Paste Lecture Text"),
-        gr.Radio(["Bullet Points", "Flashcards", "MCQs"], label="Output Mode"),
-        gr.File(file_count="multiple", label="Upload PDFs (optional)")
-    ],
-    outputs=[
-        gr.Textbox(label="Generated Notes"),
-        gr.File(label="Download as PDF"),
-        gr.File(label="Download as DOCX")
-    ],
-    title="AI Study Assistant by Jericho Sonon",
-    description="Upload your lecture notes or PDFs to generate bullet points, flashcards, or MCQs using OpenRouter GPT models.",
-    theme="soft"
-)
+css = """
+.gradio-container {
+    max-width: 100% !important;
+}
+"""
+
+with gr.Blocks(css=css, theme="soft") as iface:
+    gr.Markdown("## 🧠 AI Study Assistant by Jericho Sonon")
+    gr.Markdown("Upload your lecture notes or PDFs to generate **Bullet Points**, **Flashcards**, or **MCQs** using OpenRouter GPT models.")
+
+    with gr.Row(equal_height=True):
+        with gr.Column(scale=1):
+            lecture_text = gr.Textbox(
+                lines=35,
+                label="Paste Lecture Text",
+                placeholder="Paste your lecture or notes here...",
+                interactive=True
+            )
+            mode = gr.Radio(
+                ["Bullet Points", "Flashcards", "MCQs"],
+                label="Output Mode",
+                value="Bullet Points"
+            )
+            pdfs = gr.File(file_count="multiple", label="Upload PDFs (optional)")
+            generate_btn = gr.Button("Generate Study Notes", variant="primary")
+
+        with gr.Column(scale=1):
+            generated_notes = gr.Textbox(
+                label="Generated Notes",
+                lines=35,
+                interactive=True,
+                show_copy_button=True
+            )
+            pdf_file = gr.File(label="Download as PDF")
+            docx_file = gr.File(label="Download as DOCX")
+
+    generate_btn.click(
+        summarize,
+        inputs=[lecture_text, mode, pdfs],
+        outputs=[generated_notes, pdf_file, docx_file]
+    )
 
 iface.launch()
