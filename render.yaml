@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ai-study-assistant
+    env: python
+    plan: free
+    region: oregon   # choose closest to your users
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: OPENROUTER_API_KEY
+        fromDatabase: false
+        value: 
