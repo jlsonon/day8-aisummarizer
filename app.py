@@ -110,39 +110,14 @@ def summarize(lecture_text, mode, pdfs):
     return result, pdf_path, docx_path
 
 # -------------------------------
-# Full-Width Two-Column Interface (80% width)
+# Gradio Layout (Two-Column)
 # -------------------------------
-css = """
-.gradio-container {
-    max-width: 80% !important;
-    margin: auto !important;
-}
-.toggle-btn {
-    background-color: #4a4a4a;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-.toggle-btn:hover {
-    background-color: #6a6a6a;
-}
-"""
+with gr.Blocks(theme="soft") as iface:
+    gr.Markdown("## AI Study Assistant by Jericho Sonon")
+    gr.Markdown("Upload your lecture notes or PDFs to generate **bullet points**, **flashcards**, or **MCQs** using OpenRouter GPT models.")
 
-# -------------------------------
-# Gradio Interface with Theme Toggle
-# -------------------------------
-with gr.Blocks(css=css, theme="soft") as demo:
-    gr.Markdown("## 🧠 AI Study Assistant by Jericho Sonon")
-    gr.Markdown("Upload your lecture notes or PDFs to generate **Bullet Points**, **Flashcards**, or **MCQs** using OpenRouter GPT models.")
-
-    theme_state = gr.State("dark")
-
-    with gr.Row(equal_height=True):
+    with gr.Row():
         with gr.Column(scale=1):
-            toggle_btn = gr.Button("🌙 Toggle Light/Dark Mode", elem_classes=["toggle-btn"])
             lecture_text = gr.Textbox(
                 lines=35,
                 label="Paste Lecture Text",
@@ -167,17 +142,10 @@ with gr.Blocks(css=css, theme="soft") as demo:
             pdf_file = gr.File(label="Download as PDF")
             docx_file = gr.File(label="Download as DOCX")
 
-    # Theme toggling
-    def toggle_theme(current):
-        new_theme = "light" if current == "dark" else "dark"
-        return gr.update(theme=new_theme), new_theme
-
-    toggle_btn.click(toggle_theme, inputs=theme_state, outputs=[demo, theme_state])
-
     generate_btn.click(
         summarize,
         inputs=[lecture_text, mode, pdfs],
         outputs=[generated_notes, pdf_file, docx_file]
     )
 
-demo.launch()
+iface.launch()
