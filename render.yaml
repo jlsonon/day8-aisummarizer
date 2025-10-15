@@ -3,11 +3,15 @@ services:
     name: ai-study-assistant
     env: python
     plan: free
-    region: oregon   # choose closest to your users
+    region: oregon        # Choose the region nearest to your users
     branch: main
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app:app --host 0.0.0.0 --port 10000
+    autoDeploy: true      # Automatically redeploy on each Git push
+    numInstances: 1       # For free plan, 1 instance only
+    healthCheckPath: /    # Root endpoint used for health check
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9     # Stable and compatible with most libs
       - key: OPENROUTER_API_KEY
-        fromDatabase: false
-        value: ""
+        sync: false        # Add this manually in Render dashboard
