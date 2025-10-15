@@ -22,6 +22,7 @@ MODEL = "gpt-3.5-turbo"
 
 app = FastAPI()
 
+
 # -------------------------------
 # Async API Call to OpenRouter
 # -------------------------------
