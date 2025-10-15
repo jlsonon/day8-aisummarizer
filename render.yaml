@@ -10,4 +10,4 @@ services:
     envVars:
       - key: OPENROUTER_API_KEY
         fromDatabase: false
-        value: 
+        value: ""
